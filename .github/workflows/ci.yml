@@ -1,0 +1,73 @@
+name: Validate and release
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CODEX_VERSION: '0.163.0'
+  CLAUDE_VERSION: '2.1.292'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install validation dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Check manifests and release tag
+        env:
+          RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+        run: |
+          if [ -n "$RELEASE_TAG" ]; then
+            python scripts/manage.py validate --tag "$RELEASE_TAG"
+          else
+            python scripts/manage.py validate
+          fi
+      - name: Install tested client versions
+        run: |
+          npm install -g "@openai/codex@$CODEX_VERSION" "@anthropic-ai/claude-code@$CLAUDE_VERSION"
+          codex --version
+          claude --version
+      - name: Test archive and native clients
+        run: python -m unittest discover -s tests -v
+      - name: Validate Claude manifests
+        run: |
+          claude plugin validate --strict .
+          claude plugin validate --strict .claude-plugin/plugin.json
+      - name: Build release archive
+        run: python scripts/manage.py build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: myskill-plugin
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: myskill-plugin
+          path: dist
+      - name: Publish verified archive and checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --generate-notes

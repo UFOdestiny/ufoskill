@@ -1,0 +1,18 @@
+{
+  "name": "myskill",
+  "version": "0.1.0",
+  "description": "Write, review, and check AI research papers with shared scientific principles and section-specific guidance.",
+  "author": {
+    "name": "UFOdestiny"
+  },
+  "homepage": "https://github.com/UFOdestiny/MySKILL#readme",
+  "repository": "https://github.com/UFOdestiny/MySKILL",
+  "license": "MIT",
+  "keywords": [
+    "academic-writing",
+    "latex",
+    "research",
+    "ai",
+    "nlp"
+  ]
+}

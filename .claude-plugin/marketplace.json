@@ -1,0 +1,16 @@
+{
+  "name": "myskill",
+  "owner": {
+    "name": "UFOdestiny"
+  },
+  "metadata": {
+    "description": "Shared AI paper writing, review, and technical checks for Codex and Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "myskill",
+      "source": "./",
+      "description": "Write, review, and check AI research papers with shared scientific principles and section-specific guidance."
+    }
+  ]
+}

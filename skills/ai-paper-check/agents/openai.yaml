@@ -1,0 +1,6 @@
+interface:
+  display_name: "AI Paper Check"
+  short_description: "Check citations, numbers, builds, and submission rules"
+  default_prompt: "Use $myskill:ai-paper-check to audit this manuscript against its sources and report verified findings and unresolved checks."
+policy:
+  allow_implicit_invocation: true
