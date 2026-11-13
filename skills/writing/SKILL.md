@@ -20,7 +20,7 @@ description: 撰写、重组、润色和压缩 AI、ML、NLP 研究论文，重�
 | Ethical Considerations，可选 | [伦理考量](references/sections/ethical-considerations.md) |
 | Appendix | [附录](references/sections/appendix.md) |
 
-处理对应内容时，再读 [引用](references/presentation/citations.md)、[表格](references/presentation/tables.md)、[图示](references/presentation/figures.md)。研究来源与结构取舍见 [文献调查](references/writing-survey.md)，仅在追溯依据或更新规范时读取。
+处理对应内容时，再读 [引用](references/presentation/citations.md)、[表格](references/presentation/tables.md)、[图示](references/presentation/figures.md)。
 
 先从已有材料确定核心问题、洞察、机制和主结果，再调整章节及段落的职责，最后修改句子。直接完成用户要求的写作；局部修改保持局部，审阅请求只给诊断，审阅并修改则交付改稿。已有材料足够时无需另建计划文件或启动整篇审计。缺少会改变研究含义、结果取值或主张范围的信息时，询问用户；缺失结果可在工作稿中明确留位。
 

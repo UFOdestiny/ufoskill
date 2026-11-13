@@ -24,7 +24,6 @@ skills/writing/
     general.md               全局故事、篇幅、数字与理论密度
     sections/                十个章节的内部逻辑
     presentation/            figures、tables、citations
-    writing-survey.md        27 篇已发表论文的结构依据
 plugin.json                  Codex 插件声明
 .agents/plugins/             Codex marketplace
 .claude-plugin/              Claude 插件声明与 marketplace
@@ -33,7 +32,7 @@ tests/                      资源完整性与双客户端加载测试
 .github/workflows/ci.yml     持续验证与标签发布
 ```
 
-从 [writing 入口](skills/writing/SKILL.md) 阅读章节索引；[全局规范](skills/writing/references/general.md) 统一全文取舍，[文献调查](skills/writing/references/writing-survey.md) 提供原文定位、引用快照和采用理由。
+从 [writing 入口](skills/writing/SKILL.md) 阅读章节索引；[全局规范](skills/writing/references/general.md) 统一全文取舍。
 
 章节顺序为 **Abstract → Introduction → Problem Formulation → Method → Experiments → Related Work → Conclusion → Limitations（可选）→ Ethical Considerations（可选）→ Appendix**。Abstract、Introduction、Conclusion 提供衔接框架，其他章节以逻辑关系为主。
 
