@@ -1,6 +1,0 @@
-interface:
-  display_name: "AI Paper Writing"
-  short_description: "Draft and revise clear, evidence-grounded AI papers"
-  default_prompt: "Use $myskill:ai-paper-writing to revise this manuscript around its central contribution, using community terminology and the supplied evidence."
-policy:
-  allow_implicit_invocation: true

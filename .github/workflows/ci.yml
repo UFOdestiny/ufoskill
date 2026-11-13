@@ -42,6 +42,8 @@ jobs:
           codex --version
           claude --version
       - name: Test archive and native clients
+        env:
+          MYSKILL_CLAUDE_BIN: claude
         run: python -m unittest discover -s tests -v
       - name: Validate Claude manifests
         run: |

@@ -4,13 +4,13 @@
     "name": "UFOdestiny"
   },
   "metadata": {
-    "description": "Shared AI paper writing, review, and technical checks for Codex and Claude Code."
+    "description": "MySKILL：单一 writing skill，中文写作规范。"
   },
   "plugins": [
     {
       "name": "myskill",
       "source": "./",
-      "description": "Write, review, and check AI research papers with shared scientific principles and section-specific guidance."
+      "description": "围绕章节内部逻辑、整体故事与可读性撰写和改进研究论文。"
     }
   ]
 }

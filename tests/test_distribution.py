@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import queue
+import re
 import shutil
 import subprocess
 import tempfile
@@ -16,6 +17,9 @@ from unittest.mock import patch
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+# Native installation tests must use an explicitly selected executable: shell
+# account wrappers may discard CLAUDE_CONFIG_DIR and mutate the live profile.
+CLAUDE_BIN = os.environ.get("MYSKILL_CLAUDE_BIN")
 spec = importlib.util.spec_from_file_location("manage", ROOT / "scripts/manage.py")
 manage = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(manage)
@@ -30,8 +34,26 @@ def copy_package(destination):
 
 
 class DistributionTests(unittest.TestCase):
+    def test_skill_is_self_contained_and_all_guides_are_reachable(self):
+        with tempfile.TemporaryDirectory() as temp:
+            skill = Path(temp) / "writing"
+            shutil.copytree(ROOT / "skills/writing", skill)
+            pending = [skill / "SKILL.md"]
+            visited = set()
+            while pending:
+                page = pending.pop().resolve()
+                if page in visited:
+                    continue
+                self.assertTrue(page.is_relative_to(skill))
+                self.assertTrue(page.is_file(), str(page))
+                visited.add(page)
+                for target in re.findall(r"\]\(([^)]+)\)", page.read_text(encoding="utf-8")):
+                    if "://" not in target and not target.startswith("#"):
+                        pending.append(page.parent / target.split("#")[0])
+            self.assertEqual(visited, {p.resolve() for p in skill.rglob("*.md")})
+
     @unittest.skipUnless(shutil.which("codex"), "Codex CLI is not installed")
-    def test_codex_reads_three_skills_from_archive(self):
+    def test_codex_reads_one_skill_from_archive(self):
         with tempfile.TemporaryDirectory(prefix="myskill-codex-") as temp:
             base = Path(temp)
             manage.build(base)
@@ -77,11 +99,11 @@ class DistributionTests(unittest.TestCase):
                     "pluginName": "myskill",
                 })["plugin"]
                 self.assertEqual({s["name"] for s in detail["skills"]},
-                                 {f"myskill:{name}" for name in manage.SKILLS})
+                                 {"myskill:writing"})
                 for skill in detail["skills"]:
                     entry = Path(skill["path"])
                     self.assertTrue(entry.is_relative_to(plugin))
-                    self.assertTrue((entry.parent / "../../shared/principles.md").is_file())
+                    self.assertTrue((entry.parent / "references/general.md").is_file())
                     self.assertIn(f'${skill["name"]}', skill["interface"]["defaultPrompt"])
             finally:
                 proc.terminate()
@@ -104,11 +126,16 @@ class DistributionTests(unittest.TestCase):
         )
         plugins = json.loads(result.stdout)
         candidates = plugins["available"] + plugins["installed"]
-        self.assertTrue(any(p["pluginId"] == "myskill@myskill" and p["version"] == manage.validate()
+        # Listing an installed plugin reports its installed version, even when
+        # the marketplace points at a newer checkout. Archive loading is tested
+        # independently above; discovery verifies identity and source here.
+        self.assertTrue(any(p["pluginId"] == "myskill@myskill"
+                            and p["marketplaceSource"]["source"] == str(ROOT)
                             for p in candidates))
 
-    @unittest.skipUnless(shutil.which("claude"), "Claude Code CLI is not installed")
-    def test_claude_installs_archive_and_loads_three_skills(self):
+    @unittest.skipUnless(CLAUDE_BIN and shutil.which(CLAUDE_BIN),
+                         "Set MYSKILL_CLAUDE_BIN to a native Claude executable")
+    def test_claude_installs_archive_and_loads_one_skill(self):
         with tempfile.TemporaryDirectory(prefix="myskill-client-") as temp:
             base = Path(temp)
             manage.build(base)
@@ -117,17 +144,16 @@ class DistributionTests(unittest.TestCase):
                 package.extractall(plugin)
             env = dict(os.environ, CLAUDE_CONFIG_DIR=str(base / "config"), NO_COLOR="1")
             for args in (("marketplace", "add", str(plugin)), ("install", "myskill@myskill")):
-                subprocess.run(["claude", "plugin", *args], env=env, check=True,
+                subprocess.run([CLAUDE_BIN, "plugin", *args], env=env, check=True,
                                capture_output=True, text=True, timeout=45)
-            result = subprocess.run(["claude", "plugin", "details", "myskill"], env=env,
+            result = subprocess.run([CLAUDE_BIN, "plugin", "details", "myskill"], env=env,
                                     check=True, capture_output=True, text=True, timeout=45)
-            self.assertRegex(result.stdout, r"Skills\s+\(3\)")
-            for name in manage.SKILLS:
-                self.assertIn(name, result.stdout)
+            self.assertRegex(result.stdout, r"Skills\s+\(1\)")
+            self.assertIn("writing", result.stdout)
             # Check resources in the host's installed copy, not just the source ZIP.
-            installed = list((base / "config/plugins/cache").rglob("shared/principles.md"))
+            installed = list((base / "config/plugins/cache").rglob("skills/writing/references/general.md"))
             self.assertEqual(len(installed), 1)
-            self.assertEqual(manage.validate(installed[0].parent.parent), manage.validate())
+            self.assertEqual(manage.validate(installed[0].parents[3]), manage.validate())
 
     def test_archive_is_reproducible_and_self_contained(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -153,23 +179,36 @@ class DistributionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             copy = Path(temp) / "repo"
             copy_package(copy)
-            shared = copy / "shared/principles.md"
-            original = shared.read_text()
-            for target in ("missing.md", "../scripts/manage.py", "../../outside.md"):
+            guide = copy / "skills/writing/references/general.md"
+            original = guide.read_text()
+            for target in ("missing.md", "../../../scripts/manage.py", "../../../../outside.md"):
                 with self.subTest(target=target):
-                    shared.write_text(original + f"\n[broken reference]({target})\n")
+                    guide.write_text(original + f"\n[broken reference]({target})\n")
                     with self.assertRaisesRegex(ValueError, "missing or unshipped reference"):
                         manage.validate(copy)
-            shared.write_text(original)
-            shared.unlink()
+            guide.write_text(original)
+            guide.unlink()
             with self.assertRaisesRegex(ValueError, "missing or unshipped reference"):
                 manage.validate(copy)
+
+    def test_extra_skills_are_rejected_at_any_depth(self):
+        with tempfile.TemporaryDirectory() as temp:
+            copy = Path(temp) / "repo"
+            copy_package(copy)
+            for relative in ("skills/review/SKILL.md", "skills/nested/writing/SKILL.md"):
+                with self.subTest(path=relative):
+                    extra = copy / relative
+                    extra.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copyfile(copy / "skills/writing/SKILL.md", extra)
+                    with self.assertRaisesRegex(ValueError, "exactly one writing skill"):
+                        manage.validate(copy)
+                    extra.unlink()
 
     def test_symlinked_resources_are_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
             copy = Path(temp) / "repo"
             copy_package(copy)
-            (copy / "shared/external").symlink_to(ROOT / "shared", target_is_directory=True)
+            (copy / "skills/writing/references/external").symlink_to(ROOT / "skills/writing/references", target_is_directory=True)
             with self.assertRaisesRegex(ValueError, "symlink"):
                 manage.validate(copy)
 
@@ -178,9 +217,9 @@ class DistributionTests(unittest.TestCase):
             copy = Path(temp) / "repo"
             copy_package(copy)
             outputs = (
-                "shared/.env", "shared/.env.local", "shared/.cache/draft.md",
-                "shared/notes.md.bak", "shared/build.log", "shared/preview.zip",
-                "skills/ai-paper-writing/__pycache__/cached.pyc",
+                "skills/writing/references/.env", "skills/writing/references/.env.local", "skills/writing/references/.cache/draft.md",
+                "skills/writing/references/notes.md.bak", "skills/writing/references/build.log", "skills/writing/references/preview.zip",
+                "skills/writing/__pycache__/cached.pyc",
             )
             for name in outputs:
                 path = copy / name
@@ -190,8 +229,8 @@ class DistributionTests(unittest.TestCase):
                 manage.build(copy / "dist")
                 with zipfile.ZipFile(next((copy / "dist").glob("*.zip"))) as package:
                     self.assertTrue(set(outputs).isdisjoint(package.namelist()))
-                    self.assertIn("shared/principles.md", package.namelist())
-                    self.assertIn("skills/ai-paper-writing/agents/openai.yaml", package.namelist())
+                    self.assertIn("skills/writing/references/general.md", package.namelist())
+                    self.assertIn("skills/writing/agents/openai.yaml", package.namelist())
 
     def test_release_tag_must_match_version(self):
         version = manage.validate()
@@ -203,29 +242,29 @@ class DistributionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             copy = Path(temp) / "repo"
             copy_package(copy)
-            entry = copy / "skills/ai-paper-writing/SKILL.md"
+            entry = copy / "skills/writing/SKILL.md"
             original = entry.read_text(encoding="utf-8")
             body = original.split("---", 2)[2]
             for fields in (
-                "name: ai-paper-writing\ndescription: [broken",
-                "name: ai-paper-writing\ndescription: [valid, yaml, wrong, type]",
-                "name: ai-paper-writing\ndescription: true",
-                "name: ai-paper-writing\ndescription: first\ndescription: second",
+                "name: writing\ndescription: [broken",
+                "name: writing\ndescription: [valid, yaml, wrong, type]",
+                "name: writing\ndescription: true",
+                "name: writing\ndescription: first\ndescription: second",
             ):
                 with self.subTest(fields=fields):
                     entry.write_text(f"---\n{fields}\n---{body}", encoding="utf-8")
                     with self.assertRaises(ValueError):
                         manage.validate(copy)
-            entry.write_text("---\nname: ai-paper-writing\ndescription: >\n  A valid multiline description.\n---" + body,
+            entry.write_text("---\nname: writing\ndescription: >\n  A valid multiline description.\n---" + body,
                              encoding="utf-8")
             self.assertEqual(manage.validate(copy), manage.validate())
             entry.write_text(original, encoding="utf-8")
-            interface = copy / "skills/ai-paper-writing/agents/openai.yaml"
+            interface = copy / "skills/writing/agents/openai.yaml"
             original = interface.read_text(encoding="utf-8")
             for broken in (
-                "invalid: [\n# $myskill:ai-paper-writing\n",
+                "invalid: [\n# $myskill:writing\n",
                 original.replace("default_prompt:", "other_field:"),
-                original.replace("$myskill:ai-paper-writing", "$myskill:ai-paper-writing-extra"),
+                original.replace("$myskill:writing", "$myskill:writing-extra"),
                 original.replace("allow_implicit_invocation: true", 'allow_implicit_invocation: "true"'),
                 original + "\npolicy: {}\n",
             ):

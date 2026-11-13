@@ -1,6 +1,0 @@
-interface:
-  display_name: "AI Paper Review"
-  short_description: "Review argument, terminology, and reader clarity"
-  default_prompt: "Use $myskill:ai-paper-review to identify the most consequential argument and readability issues in this manuscript without rewriting it."
-policy:
-  allow_implicit_invocation: true

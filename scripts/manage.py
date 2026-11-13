@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate, version, and package the shared Codex/Claude Code writing plugin."""
+"""Validate, version, and package the single-skill Codex/Claude Code writing plugin."""
 
 import argparse
 import hashlib
@@ -14,8 +14,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 MANIFESTS = ("plugin.json", ".claude-plugin/plugin.json")
 CATALOGS = (".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json")
-SKILLS = ("ai-paper-writing", "ai-paper-review", "ai-paper-check")
-RESOURCE_DIRS = ("skills", "shared")
+SKILL_NAME = "writing"
 # Runtime resources are text guidance and metadata. Do not bundle local outputs.
 RESOURCE_SUFFIXES = {".md", ".yaml", ".yml", ".json"}
 SEMVER = re.compile(r"(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\Z")
@@ -62,16 +61,15 @@ def require(condition, message):
 
 def package_files(root):
     files = [root / name for name in (*MANIFESTS, *CATALOGS, "README.md", "LICENSE")]
-    for directory in RESOURCE_DIRS:
-        folder = root / directory
-        require(folder.is_dir() and not folder.is_symlink(), f"missing or symlinked resource directory: {directory}")
-        for path in sorted(folder.rglob("*")):
-            require(not path.is_symlink(), f"package contains a symlink: {path.relative_to(root)}")
-            relative_parts = path.relative_to(folder).parts
-            if any(part.startswith(".") or part == "__pycache__" for part in relative_parts):
-                continue
-            if path.is_file() and path.suffix in RESOURCE_SUFFIXES:
-                files.append(path)
+    folder = root / "skills"
+    require(folder.is_dir() and not folder.is_symlink(), "missing or symlinked skills directory")
+    for path in sorted(folder.rglob("*")):
+        require(not path.is_symlink(), f"package contains a symlink: {path.relative_to(root)}")
+        relative_parts = path.relative_to(folder).parts
+        if any(part.startswith(".") or part == "__pycache__" for part in relative_parts):
+            continue
+        if path.is_file() and path.suffix in RESOURCE_SUFFIXES:
+            files.append(path)
     return files
 
 
@@ -103,31 +101,31 @@ def validate(root=None, tag=None):
             require(source["source"] == "local", "Codex catalog must use a local source")
             require(plugin["policy"] == {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
                     "unexpected Codex install policy")
-    actual_skills = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
-    require(actual_skills == set(SKILLS), "expected writing, review, and check skills")
-    for name in SKILLS:
-        skill = root / "skills" / name
-        entry = (skill / "SKILL.md").read_text(encoding="utf-8")
-        frontmatter = re.match(r"\A---\n(.*?)\n---(?:\n|$)", entry, re.DOTALL)
-        require(frontmatter, f"{name}: skill needs YAML frontmatter")
-        fields = read_yaml(frontmatter[1], f"{name}/SKILL.md")
-        require(fields.get("name") == name and nonempty_string(fields.get("description")),
-                f"{name}: skill name or description is missing")
-        require("../../shared/principles.md" in entry, f"{name}: shared principles link is missing")
-        interface = skill / "agents/openai.yaml"
-        require(interface.is_file(), f"{name}: Codex interface is missing")
-        agent = read_yaml(interface.read_text(encoding="utf-8"), str(interface.relative_to(root)))
-        ui = agent.get("interface")
-        require(isinstance(ui, dict), f"{name}: interface must be a mapping")
-        for key in ("display_name", "short_description", "default_prompt"):
-            require(nonempty_string(ui.get(key)), f"{name}: {key} must be a nonempty string")
-        require(re.search(r"\$myskill:" + re.escape(name) + r"(?![\w-])", ui["default_prompt"]),
-                f"{name}: default prompt must invoke its own skill")
-        policy = agent.get("policy", {})
-        require(isinstance(policy, dict), f"{name}: policy must be a mapping")
-        if "allow_implicit_invocation" in policy:
-            require(type(policy["allow_implicit_invocation"]) is bool,
-                    f"{name}: allow_implicit_invocation must be a boolean")
+    skill = root / "skills" / SKILL_NAME
+    require(set((root / "skills").rglob("SKILL.md")) == {skill / "SKILL.md"},
+            "expected exactly one writing skill")
+    name = SKILL_NAME
+    entry = (skill / "SKILL.md").read_text(encoding="utf-8")
+    frontmatter = re.match(r"\A---\n(.*?)\n---(?:\n|$)", entry, re.DOTALL)
+    require(frontmatter, f"{name}: skill needs YAML frontmatter")
+    fields = read_yaml(frontmatter[1], f"{name}/SKILL.md")
+    require(fields.get("name") == name and nonempty_string(fields.get("description")),
+            f"{name}: skill name or description is missing")
+    require("references/general.md" in entry, f"{name}: general writing guide link is missing")
+    interface = skill / "agents/openai.yaml"
+    require(interface.is_file(), f"{name}: Codex interface is missing")
+    agent = read_yaml(interface.read_text(encoding="utf-8"), str(interface.relative_to(root)))
+    ui = agent.get("interface")
+    require(isinstance(ui, dict), f"{name}: interface must be a mapping")
+    for key in ("display_name", "short_description", "default_prompt"):
+        require(nonempty_string(ui.get(key)), f"{name}: {key} must be a nonempty string")
+    require(re.search(r"\$myskill:" + re.escape(name) + r"(?![\w-])", ui["default_prompt"]),
+            f"{name}: default prompt must invoke its own skill")
+    policy = agent.get("policy", {})
+    require(isinstance(policy, dict), f"{name}: policy must be a mapping")
+    if "allow_implicit_invocation" in policy:
+        require(type(policy["allow_implicit_invocation"]) is bool,
+                f"{name}: allow_implicit_invocation must be a boolean")
     files = package_files(root)
     shipped = {p.resolve() for p in files}
     for file in files:
