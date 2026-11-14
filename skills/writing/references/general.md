@@ -5,11 +5,14 @@
 - 先用一句话说清“本文发现了什么，因此能怎样解决什么问题”。全篇围绕这一中心判断展开；Abstract 压缩它，Introduction 建立理由，Method 实现它，Experiments 检验它，Conclusion 提炼它。
 - **Novelty 是具体差别及其意义：** 相比最接近的工作，改变了哪项问题设定、信息需求、机制、性质或解释，因此新增什么能力。仅更换名称、拼接组件或提升一个分数，不足以解释新意；用具体比较让读者看见贡献。
 - **Insight 是设计背后的认识：** 哪个观察、关系或结构解释了困难，并使某个设计成为合理选择。先讲认识，再讲操作；“我们提出一种新框架”只是贡献声明。观察可以来自数据、例子或理论，不强制另做动机实验。
+- **对照示例：**
+  - Insight。✗ `We propose a novel framework that combines retrieval and reranking.`（只是贡献声明）✓ `Our key insight is that most retrieval failures come from a granularity mismatch between queries and documents, not from ranking noise; aligning granularity before ranking therefore removes the dominant error source.`
+  - Novelty。✗ `Unlike prior work, our method achieves better performance.` ✓ `Unlike X, which calibrates with labeled target data, our method calibrates with unlabeled model outputs alone, so it applies to domains without annotations.`
 - 挑战、设计与验证相互对应即可，不机械凑成三组。分析论文围绕研究问题与发现组织，理论论文围绕对象、性质与推论组织，数据集论文围绕能力缺口、构建原则与验证组织。
 
 **2. 章节顺序与篇幅**
 
-默认：**Abstract → Introduction → Problem Formulation → Method → Experiments → Related Work → Conclusion → Limitations（可选）→ Ethical Considerations（可选）→ Appendix**。参考文献按模板放置；已有章节标题可保留其对应职责。下表是经验型方法论文的起始预算，按正文占用空间估算，含归属各节的图表，不含参考文献、附录及单独计页的可选章节。
+新稿默认：**Abstract → Introduction → Problem Formulation → Method → Experiments → Related Work → Conclusion → Limitations（可选）→ Ethical Considerations（可选）→ Appendix**。参考文献按模板放置。已有稿件保持原有章节顺序与标题，各节按对应章节文件的组织链承担职责；用户明确要求重组时才调整顺序。下表是经验型方法论文的起始预算，按正文占用空间估算，含归属各节的图表，不含参考文献、附录及单独计页的可选章节。
 
 | 章节 | 起始占比 | 篇幅主要用于 |
 |---|---:|---|
@@ -41,3 +44,12 @@
 保留会改变结论含义的事实与条件，并自然融入对应陈述；删掉弱结果后若“所有任务均改善”已不成立，就改写这个主张。数值、实验、引用与定理条件沿用证据。`show` 用于直接发现，`suggest` 用于解释性推断，不靠层层 `may / potentially / to some extent` 表达严谨，也不以夸大的确定性替代证据。
 
 Abstract、Introduction、Conclusion 使用对应文件中的衔接框架；其余章节只建议语义合适的连接，不规定连接词配额。写完检查信息是否前进，删除同一贡献在相邻段落中的重复铺陈。
+
+**6. 去除 LLM 文风**
+
+英文正文应像领域研究者写的，而不是模型生成的。章节文件中的衔接框架不受本节限制。
+
+- **替换空泛用词：** `delve into`、`crucial / pivotal / paramount`、`intricate`、`realm`、`landscape`、`tapestry`、`myriad`、`showcase`、`underscore`、`shed light on`、`pave the way`、`groundbreaking`、`seamless(ly)`、`it is worth noting that`、`plays a crucial role in` 改为具体陈述；`leverage / utilize` 一般写 `use`；`novel` 不反复自称；`robust`、`comprehensive`、`significantly` 只在有对应证据或统计检验时使用。
+- **不用模板句式：** 不用 em dash（—）插入语，改用逗号、括号或拆句；不用 `not only ... but also`、`It is not X, but Y` 式反转；不凑三项排比或三连形容词；不在段末加 `This demonstrates the effectiveness of ...` 一类总结句；不连续用 `Moreover / Furthermore / Additionally` 开头。
+- **不用格式代替论证：** 正文不用加粗小标题开头的条目代替段落，不用冒号引出“结论 + 列表”。贡献列表等模板惯例除外。
+- **写法朴素具体：** 主语明确，多用主动语态和 `we`；方法与结论用一般现在时，具体实验过程可用过去时。一个概念始终用同一术语，不为避免重复换同义词。

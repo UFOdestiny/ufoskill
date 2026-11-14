@@ -1,8 +1,8 @@
 # MySKILL
 
-一个自包含的 **writing** skill，用于撰写、重组、润色和压缩 AI、ML、NLP 研究论文，同时支持 Codex 与 Claude Code。规范用中文，论文正文沿用原稿语言；无原稿时默认英文，也可指定中文。
+一个自包含的 **writing** skill，用于撰写、重组、润色和压缩 AI、ML、NLP 研究论文，同时支持 Codex 与 Claude Code。规范用中文；论文正文一律英文，说明与修改理由跟随用户语言。
 
-核心是章节内部逻辑、整体故事、novelty、insight、篇幅、数字密度与可读性。直接表达贡献与发现，删除空泛防御和偏离主线的内容。
+核心约束是 `references/sections/` 中各章节的组织逻辑：写、改或诊断任一章节都按其组织链展开。在此之上统一整体故事、novelty、insight、篇幅、数字密度与可读性，并去除 LLM 文风。已有稿件保持原章节顺序，用户要求重组时才调整；引用不凭记忆生成，缺失内容统一留 `[TODO: ...]`。直接表达贡献与发现，删除空泛防御和偏离主线的内容。
 
 ## 使用
 
@@ -41,16 +41,16 @@ tests/                      资源完整性与双客户端加载测试
 ## 安装
 
 ```bash
-# Codex：本地安装（替换为实际路径）
-codex plugin marketplace add /path/to/MySKILL
+# Codex
+codex plugin marketplace add UFOdestiny/MySKILL
 codex plugin add myskill@myskill
 
-# Claude Code：本地安装
-claude plugin marketplace add /path/to/MySKILL
+# Claude Code
+claude plugin marketplace add UFOdestiny/MySKILL
 claude plugin install myskill@myskill
 ```
 
-从 GitHub 已发布版本安装时，将本地路径换为 `UFOdestiny/MySKILL`。安装或更新后启动新会话，使用唯一的 `myskill:writing` 入口；远程安装不会包含尚未发布的本地修改。
+安装或更新后启动新会话，使用唯一的 `myskill:writing` 入口；远程安装不会包含尚未发布的本地修改。
 
 ## 验证与打包
 
