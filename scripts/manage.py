@@ -15,6 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFESTS = ("plugin.json", ".claude-plugin/plugin.json")
 CATALOGS = (".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json")
 SKILL_NAME = "writing"
+MARKETPLACE = "UFOdestiny"
+# Other plugins listed in the marketplace; they live in their own repositories.
+EXTERNAL_PLUGINS = {"always-approve": "https://github.com/UFOdestiny/always-approve.git"}
 # Runtime resources are text guidance and metadata. Do not bundle local outputs.
 RESOURCE_SUFFIXES = {".md", ".yaml", ".yml", ".json"}
 SEMVER = re.compile(r"(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\Z")
@@ -79,7 +82,7 @@ def validate(root=None, tag=None):
     version = manifests[0]["version"]
     require(SEMVER.fullmatch(version), "version must be MAJOR.MINOR.PATCH")
     for name, manifest in zip(MANIFESTS, manifests):
-        require(manifest["name"] == "myskill", f"{name}: unexpected plugin name")
+        require(manifest["name"] == "ufoskill", f"{name}: unexpected plugin name")
         require(manifest["version"] == version, f"{name}: version drift")
         require(manifest["description"] and manifest["author"]["name"], f"{name}: missing metadata")
     require(manifests[0]["$schema"] == "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
@@ -88,19 +91,23 @@ def validate(root=None, tag=None):
     require(portable_metadata == manifests[1], "portable and Claude plugin metadata differ")
     for name in CATALOGS:
         catalog = read_json(root, name)
-        require(catalog["name"] == "myskill", f"{name}: unexpected marketplace name")
-        require(len(catalog["plugins"]) == 1, f"{name}: expected one plugin")
-        plugin = catalog["plugins"][0]
-        require(plugin["name"] == "myskill", f"{name}: plugin identity drift")
-        source = plugin["source"]
+        require(catalog["name"] == MARKETPLACE, f"{name}: unexpected marketplace name")
+        plugins = {plugin["name"]: plugin for plugin in catalog["plugins"]}
+        require(len(plugins) == len(catalog["plugins"]), f"{name}: duplicate plugin names")
+        require(set(plugins) == {"ufoskill", *EXTERNAL_PLUGINS}, f"{name}: plugin identity drift")
+        source = plugins["ufoskill"]["source"]
         path = source["path"] if isinstance(source, dict) else source
         require(path == "./", f"{name}: source must resolve to the repository root")
+        for plugin_name, url in EXTERNAL_PLUGINS.items():
+            require(plugins[plugin_name]["source"] == {"source": "url", "url": url},
+                    f"{name}: {plugin_name} must come from {url}")
         if name.startswith(".claude"):
             require(catalog["owner"]["name"], "Claude marketplace needs an owner")
         else:
             require(source["source"] == "local", "Codex catalog must use a local source")
-            require(plugin["policy"] == {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
-                    "unexpected Codex install policy")
+            for plugin in plugins.values():
+                require(plugin["policy"] == {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+                        "unexpected Codex install policy")
     skill = root / "skills" / SKILL_NAME
     require(set((root / "skills").rglob("SKILL.md")) == {skill / "SKILL.md"},
             "expected exactly one writing skill")
@@ -119,7 +126,7 @@ def validate(root=None, tag=None):
     require(isinstance(ui, dict), f"{name}: interface must be a mapping")
     for key in ("display_name", "short_description", "default_prompt"):
         require(nonempty_string(ui.get(key)), f"{name}: {key} must be a nonempty string")
-    require(re.search(r"\$myskill:" + re.escape(name) + r"(?![\w-])", ui["default_prompt"]),
+    require(re.search(r"\$ufoskill:" + re.escape(name) + r"(?![\w-])", ui["default_prompt"]),
             f"{name}: default prompt must invoke its own skill")
     policy = agent.get("policy", {})
     require(isinstance(policy, dict), f"{name}: policy must be a mapping")
@@ -161,7 +168,7 @@ def bump(version):
 def build(output):
     version = validate()
     output.mkdir(parents=True, exist_ok=True)
-    archive = output / f"myskill-{version}.zip"
+    archive = output / f"ufoskill-{version}.zip"
     files = package_files(ROOT)
     # Stable paths, timestamps, and permissions make builds reproducible.
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as package:
@@ -187,7 +194,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.command == "validate":
-            print(f"Validated MySKILL {validate(tag=args.tag)}")
+            print(f"Validated ufoskill {validate(tag=args.tag)}")
         elif args.command == "bump":
             bump(args.version)
         else:

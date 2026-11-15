@@ -1,13 +1,13 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "myskill",
-  "version": "0.2.2",
+  "name": "ufoskill",
+  "version": "0.1.0",
   "description": "单一、自包含的 writing skill：组织 AI、ML、NLP 论文的章节逻辑、故事、洞察与可读性。",
   "author": {
     "name": "UFOdestiny"
   },
-  "homepage": "https://github.com/UFOdestiny/MySKILL#readme",
-  "repository": "https://github.com/UFOdestiny/MySKILL",
+  "homepage": "https://github.com/UFOdestiny/ufoskill#readme",
+  "repository": "https://github.com/UFOdestiny/ufoskill",
   "license": "MIT",
   "keywords": [
     "academic-writing",

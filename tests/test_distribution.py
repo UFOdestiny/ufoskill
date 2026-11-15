@@ -19,7 +19,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 # Native installation tests must use an explicitly selected executable: shell
 # account wrappers may discard CLAUDE_CONFIG_DIR and mutate the live profile.
-CLAUDE_BIN = os.environ.get("MYSKILL_CLAUDE_BIN")
+CLAUDE_BIN = os.environ.get("UFOSKILL_CLAUDE_BIN")
 spec = importlib.util.spec_from_file_location("manage", ROOT / "scripts/manage.py")
 manage = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(manage)
@@ -54,7 +54,7 @@ class DistributionTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("codex"), "Codex CLI is not installed")
     def test_codex_reads_one_skill_from_archive(self):
-        with tempfile.TemporaryDirectory(prefix="myskill-codex-") as temp:
+        with tempfile.TemporaryDirectory(prefix="ufoskill-codex-") as temp:
             base = Path(temp)
             manage.build(base)
             plugin = base / "plugin"
@@ -91,15 +91,15 @@ class DistributionTests(unittest.TestCase):
 
             try:
                 request(1, "initialize", {
-                    "clientInfo": {"name": "myskill-validation", "version": manage.validate()},
+                    "clientInfo": {"name": "ufoskill-validation", "version": manage.validate()},
                     "capabilities": {"experimentalApi": True},
                 })
                 detail = request(2, "plugin/read", {
                     "marketplacePath": str(plugin / ".agents/plugins/marketplace.json"),
-                    "pluginName": "myskill",
+                    "pluginName": "ufoskill",
                 })["plugin"]
                 self.assertEqual({s["name"] for s in detail["skills"]},
-                                 {"myskill:writing"})
+                                 {"ufoskill:writing"})
                 for skill in detail["skills"]:
                     entry = Path(skill["path"])
                     self.assertTrue(entry.is_relative_to(plugin))
@@ -119,9 +119,9 @@ class DistributionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("codex"), "Codex CLI is not installed")
     def test_codex_discovers_plugin(self):
         result = subprocess.run(
-            ["codex", "-c", 'marketplaces.myskill.source_type="local"',
-             "-c", "marketplaces.myskill.source=" + json.dumps(str(ROOT)),
-             "plugin", "list", "--marketplace", "myskill", "--available", "--json"],
+            ["codex", "-c", 'marketplaces.UFOdestiny.source_type="local"',
+             "-c", "marketplaces.UFOdestiny.source=" + json.dumps(str(ROOT)),
+             "plugin", "list", "--marketplace", "UFOdestiny", "--available", "--json"],
             capture_output=True, text=True, check=True, timeout=45,
         )
         plugins = json.loads(result.stdout)
@@ -129,24 +129,24 @@ class DistributionTests(unittest.TestCase):
         # Listing an installed plugin reports its installed version, even when
         # the marketplace points at a newer checkout. Archive loading is tested
         # independently above; discovery verifies identity and source here.
-        self.assertTrue(any(p["pluginId"] == "myskill@myskill"
+        self.assertTrue(any(p["pluginId"] == "ufoskill@UFOdestiny"
                             and p["marketplaceSource"]["source"] == str(ROOT)
                             for p in candidates))
 
     @unittest.skipUnless(CLAUDE_BIN and shutil.which(CLAUDE_BIN),
-                         "Set MYSKILL_CLAUDE_BIN to a native Claude executable")
+                         "Set UFOSKILL_CLAUDE_BIN to a native Claude executable")
     def test_claude_installs_archive_and_loads_one_skill(self):
-        with tempfile.TemporaryDirectory(prefix="myskill-client-") as temp:
+        with tempfile.TemporaryDirectory(prefix="ufoskill-client-") as temp:
             base = Path(temp)
             manage.build(base)
             plugin = base / "plugin"
             with zipfile.ZipFile(next(base.glob("*.zip"))) as package:
                 package.extractall(plugin)
             env = dict(os.environ, CLAUDE_CONFIG_DIR=str(base / "config"), NO_COLOR="1")
-            for args in (("marketplace", "add", str(plugin)), ("install", "myskill@myskill")):
+            for args in (("marketplace", "add", str(plugin)), ("install", "ufoskill@UFOdestiny")):
                 subprocess.run([CLAUDE_BIN, "plugin", *args], env=env, check=True,
                                capture_output=True, text=True, timeout=45)
-            result = subprocess.run([CLAUDE_BIN, "plugin", "details", "myskill"], env=env,
+            result = subprocess.run([CLAUDE_BIN, "plugin", "details", "ufoskill"], env=env,
                                     check=True, capture_output=True, text=True, timeout=45)
             self.assertRegex(result.stdout, r"Skills\s+\(1\)")
             self.assertIn("writing", result.stdout)
@@ -262,9 +262,9 @@ class DistributionTests(unittest.TestCase):
             interface = copy / "skills/writing/agents/openai.yaml"
             original = interface.read_text(encoding="utf-8")
             for broken in (
-                "invalid: [\n# $myskill:writing\n",
+                "invalid: [\n# $ufoskill:writing\n",
                 original.replace("default_prompt:", "other_field:"),
-                original.replace("$myskill:writing", "$myskill:writing-extra"),
+                original.replace("$ufoskill:writing", "$ufoskill:writing-extra"),
                 original.replace("allow_implicit_invocation: true", 'allow_implicit_invocation: "true"'),
                 original + "\npolicy: {}\n",
             ):

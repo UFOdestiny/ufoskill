@@ -1,16 +1,24 @@
 {
-  "name": "myskill",
+  "name": "UFOdestiny",
   "owner": {
     "name": "UFOdestiny"
   },
   "metadata": {
-    "description": "MySKILL：单一 writing skill，中文写作规范。"
+    "description": "UFOdestiny 的插件：ufoskill 写作 skill 与 always-approve 权限审批。"
   },
   "plugins": [
     {
-      "name": "myskill",
+      "name": "ufoskill",
       "source": "./",
       "description": "围绕章节内部逻辑、整体故事与可读性撰写和改进研究论文。"
+    },
+    {
+      "name": "always-approve",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/UFOdestiny/always-approve.git"
+      },
+      "description": "默认自动批准 Claude Code 与 Codex 的权限请求，可按项目配置审批级别。"
     }
   ]
 }

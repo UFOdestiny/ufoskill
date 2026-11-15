@@ -1,6 +1,6 @@
 interface:
-  display_name: "MySKILL Writing"
+  display_name: "UFOskill Writing"
   short_description: "围绕章节内部逻辑、整体故事、核心洞察与可读性撰写和改进研究论文"
-  default_prompt: "使用 $myskill:writing，依据章节规范重组这篇论文的章节内部逻辑，突出洞察与贡献，删去防御性表述并提高可读性。"
+  default_prompt: "使用 $ufoskill:writing，依据章节规范重组这篇论文的章节内部逻辑，突出洞察与贡献，删去防御性表述并提高可读性。"
 policy:
   allow_implicit_invocation: true

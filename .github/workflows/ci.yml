@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 env:
-  CODEX_VERSION: '0.163.0'
-  CLAUDE_VERSION: '2.1.292'
+  CODEX_VERSION: '0.169.0'
+  CLAUDE_VERSION: '2.1.311'
 
 jobs:
   validate:
@@ -43,7 +43,7 @@ jobs:
           claude --version
       - name: Test archive and native clients
         env:
-          MYSKILL_CLAUDE_BIN: claude
+          UFOSKILL_CLAUDE_BIN: claude
         run: python -m unittest discover -s tests -v
       - name: Validate Claude manifests
         run: |
@@ -53,7 +53,7 @@ jobs:
         run: python scripts/manage.py build
       - uses: actions/upload-artifact@v4
         with:
-          name: myskill-plugin
+          name: ufoskill-plugin
           path: dist/*
           if-no-files-found: error
 
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: myskill-plugin
+          name: ufoskill-plugin
           path: dist
       - name: Publish verified archive and checksums
         env:
