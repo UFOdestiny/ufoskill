@@ -50,6 +50,20 @@ claude plugin marketplace add UFOdestiny/MySKILL
 claude plugin install myskill@myskill
 ```
 
+## 更新
+
+从 GitHub 拉取最新发布版本：
+
+```bash
+# Codex
+codex plugin marketplace upgrade myskill
+codex plugin add myskill@myskill
+
+# Claude Code
+claude plugin marketplace update myskill
+claude plugin update myskill@myskill
+```
+
 安装或更新后启动新会话，使用唯一的 `myskill:writing` 入口；远程安装不会包含尚未发布的本地修改。
 
 ## 验证与打包
