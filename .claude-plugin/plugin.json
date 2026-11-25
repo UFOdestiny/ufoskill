@@ -1,6 +1,6 @@
 {
   "name": "ufoskill",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "单一、自包含的 writing skill：组织 AI、ML、NLP 论文的章节逻辑、故事、洞察与可读性。",
   "author": {
     "name": "UFOdestiny"
