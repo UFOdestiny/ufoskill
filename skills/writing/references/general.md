@@ -44,7 +44,7 @@
 - 每节先回答一个读者问题，每段推进一个中心判断。段首给判断或目的，随后解释或举证，段末交代其作用或自然引出下一步；不要求每段都补总结句。
 - 首次阅读应能沿着文字读通“为什么、做什么、得到什么”。先给直觉、例子或总览，再引入必要符号。方法类论文默认用一个贯穿全文的小例子，串联定义、性质与结果。
 - **定义先于使用：** 术语、符号和图表标签在首次出现处或之前定义；靠前的 Teaser 和表格在原位置就能读懂，结果表不早于其基线和指标的定义。正文指向附录参考约 8–14 处，每处说明附录里有什么；一段通常只引用一组图表。
-- **交叉引用写进句子：** 引用图、表、章节和附录时，让引用成为句子成分，不在句末加括号。✗ `We ask whether labels from other models can suffice to score its responses (Figure~\ref{fig:teaser}).` ✓ `As shown in Figure~\ref{fig:teaser}, we ask whether ...`；也可写 `Table~\ref{tab:main} reports ...`、`Section~\ref{sec:method} describes ...`、`Appendix~\ref{app:setup} lists the full configuration.`。Abstract 不含任何交叉引用；Introduction 只引用 Teaser 和一个主结果图或表，不引用 Section 与 Appendix。
+- **交叉引用写进句子：** 引用图、表、章节和附录时，让引用成为句子成分，不在句末加括号。✗ `We ask whether labels from other models can suffice to score its responses (Figure~\ref{fig:teaser}).` ✓ `As shown in Figure~\ref{fig:teaser}, we ask whether ...`；也可写 `Table~\ref{tab:main} reports ...`、`We describe ... in Section~\ref{sec:method}`、`Appendix~\ref{app:setup} lists the full configuration.`。**Section 不作主语：** ✗ `Section~\ref{sec:queries} queries the model ...` ✓ `We introduce ... in Section~\ref{sec:queries}`；只在读者确需跳转时引用章节，删去不必要的 `Section~X`。Method 首段是例外，模块名后用括号标注小节，如 `Prefix queries (Section~\ref{sec:queries}) ...`（见方法章节文件）。Abstract 不含任何交叉引用；Introduction 只引用 Teaser 和一个主结果图或表，不引用 Section 与 Appendix。
 - **术语、缩写与符号：** 使用领域通用术语，用词对照 baseline 与最接近的工作，不自造词，不给普通操作层层命名；同一对象保持同一名称。缩写在摘要和正文中各自第一次出现时必须展开，AUROC 等常见指标名及数据集、模型名除外；自造缩写尽量少，参考 3–5 个以内；方法名第一次出现写成 `Judge-Imitating Probe (JIP)` 的形式。一个符号只表示一个对象。
 - **方法名：** 方法名指向真实机制，可读、易记，不与正文中描述其他动作的常用词同形，也不与同领域已有方法重名，命名前检索一次。正文在需要指代方法时使用方法名，不把它当作每句的主语反复出现。
 - **问题名称准确：** 先检索领域是否已有通用说法，有则沿用。借用的说法若在文献中另有含义，加限定词使其准确，并在首次出现时定义该设定下哪些信息可用、哪些不可用。
@@ -68,6 +68,7 @@ Abstract、Introduction、Conclusion 使用对应文件中的衔接框架；其�
 
 - **替换空泛用词：** `delve into`、`crucial / pivotal / paramount`、`intricate`、`realm`、`landscape`、`tapestry`、`myriad`、`showcase`、`underscore`、`shed light on`、`pave the way`、`groundbreaking`、`seamless(ly)`、`it is worth noting that`、`plays a crucial role in` 改为具体陈述；`leverage / utilize` 一般写 `use`；`novel` 不反复自称；`robust`、`comprehensive`、`significantly` 只在有对应证据或统计检验时使用。
 - **不用模板句式：** 不用 em dash（—）插入语，改用括号或拆句；不用 `not only ... but also`、`It is not X, but Y` 式反转；不凑三项排比或三连形容词；不在段末加 `This demonstrates the effectiveness of ...` 一类总结句；不连续用 `Moreover / Furthermore / Additionally` 开头。
+- **句子简单易读：** 一句讲一件事；能独立成句的内容用句号分开，不用分号硬接；难懂的定义改写成直白的短句。代词 `it`、`this` 等必须有明确先行词，标题中不用 `it`，指代方法时直接写方法名。
 - **写法朴素具体：** 主语明确，多用主动语态和 `we`；方法与结论用一般现在时，具体实验过程可用过去时。一个概念始终用同一术语，不为避免重复换同义词。一句话不要断成很多截，少用连续逗号插入语，例如写 `could not see in principle`，不写 `could not, in principle, see`。
 - **少用 `let` 一类短词：** `lets X do` 改为 `allows X to do` 或 `enables X to do`，例如 ✗ `A confidence score for each response lets a system abstain` ✓ `A confidence score for each response allows a system to abstain`。数学定义中的 `Let $x$ denote ...` 不受此限。
 - **连接副词不夹在句中：** `therefore`、`thus`、`hence` 不放在主语与谓语之间。确为因果推进时移到句首，✗ `We therefore ask whether ...` ✓ `Therefore, we ask whether ...`；上文已说清因果时直接删去，写 `We ask whether ...`。

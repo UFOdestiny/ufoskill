@@ -1,8 +1,12 @@
 **方法组织：总体思路 → 按依赖展开的关键机制 → 学习或求解 → 推断与使用。**
 
-开头用一段描述整个方法的过程：引用总览图，按步骤说明方法依次做什么，每一步指向对应小节并说出该小节的实际操作（如 `Section~X computes ... from ...`），不写只有 `Section~X describes ...` 的空导航；方法很长时也可只点出主要新意所在的小节。指向附录的完整算法或例子时用 `provides`、`presents` 等，不用 `gives`。小节按实际计算或论证关系命名。
+开头用一段简短描述整个方法，通常 4–5 句：引用总览图，说明方法由哪几个模块组成（写 `consists of three modules`，不写 `in four steps`），模块名与总览图一致；每个模块名后用括号标出对应小节，并用一句说出该模块实际做什么、解决引言中的哪个挑战，如 `Prefix queries (Section~\ref{sec:queries}) ask the frozen model ... , exposing errors that ...`。Section 不作主语，不写 `Section~X computes ...` 或 `Section~X describes ...`；理论分析小节写 `A theoretical analysis (Section~X) explains ...` 或 `We analyze ... in Section~X`。指向附录的完整算法或例子时用 `provides`、`presents` 等，不用 `gives`。小节按实际计算或论证关系命名。
 
 **小节与总览图一一对应：** 小节标题、段落标题与关键名词和总览图中对应模块的名称一致；图中每个模块用 `(§3.1)` 这类标记注明对应小节，写不下 `Section` 时用 `§`。不在图中呈现的步骤（如训练完成后的迁移或部署）在空间允许时也在图中对应位置加标记，否则在图注中说明。描述训练完成后操作的小节，首句点明这一点（如 `Once ... is trained, we ...`）。
+
+**模块名贯穿全文：** Introduction 第 4 段列出的关键设计、Method 首段、小节标题与总览图使用同一组模块名，并在后文反复使用这些关键词；前后描述不一致会让读者困惑。关键模块与引言中的挑战一一对应（如“模块 A 解决挑战 1，模块 B 解决挑战 2”），分类器等标准组件不作为 novelty 陈述。
+
+**设计与分析分开：** 各方法模块小节构成完整设计；为设计提供理论依据的内容单列为最后一小节，标题写成 `Theoretical Analysis of ...` 一类，不用 `Transfer to a New Model` 这类操作名；开头直接进入要分析的问题（如 `We now analyze when ...`），不在其中定义新组件或推断流程。属于设计的组件（如迁移时使用的特征变换）与推断流程写进它所属的模块小节，作为该小节末尾的一个段落。
 
 | 内容块 | 内部逻辑 | 参考占比 |
 |---|---|---:|

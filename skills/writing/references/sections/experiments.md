@@ -1,15 +1,15 @@
 **实验组织：简明设置 → 核心效果 → 设计为何有效 → 与主张有关的进一步发现。**
 
-先让读者理解比较，再用结果回答研究问题。默认主效果先行；若论文核心是一个现象或机制，可先呈现发现，再展开解释和应用。小节可以采用 RQ、问题式标题或发现式标题，无需强制写 `RQ1`。
+先让读者理解比较，再用结果回答研究问题。默认主效果先行；若论文核心是一个现象或机制，可先呈现发现，再展开解释和应用。**小节标题用名词短语：** 不用问句或 RQ 式标题，标题中不出现无先行词的 `it`。实验类型直接作标题，如 `Comparison with Target Labels`、`Ablation Study of ...`、`Computational Efficiency`；验证动机或洞察的分析可用发现式名词短语，如 `Late Convergence of Incorrect Responses`。每个小节都有明确意义，首句点明它回答的问题或检验的洞察（如 `This analysis confirms the key insight behind X: ...`）。一般顺序：总体比较 → 消融 → 机制或动机验证 → 效率等进一步分析。
 
 **1. Experimental Setup（约占实验文字 20%）**
 
 按 Datasets → Models → Baselines → Metrics 组织，使读者知道测量什么、比较谁、怎样比较。每个数据集、模型和基线名后紧跟各自引用；每类末尾用一句话指向附录对应小节，细节不在正文展开。
 
-- **Datasets：** 只说明用了哪些数据集，哪些用于训练、哪些用于测试，涉及分布迁移时说明哪些属于 ID、哪些属于 OOD；划分、统计与预处理放附录。
-- **Models：** 列出使用的模型，区分生成、评价、特征提取等角色；版本与推理配置放附录。
-- **Baselines：** 按最接近路线、强比较方法与必要简单方法粗略分组列举；标明消融、使用额外信息的参考方法及引用结果，实现细节放附录。
-- **Metrics：** 先说成功标准，再说用了哪几类指标、各自含义及方向。交代会改变比较的标签、采样／调用预算、评价器与统计口径；置信度排序、概率校准、实际决策收益分别解释。
+- **Datasets：** 以 `We evaluate X on [N] datasets` 开头给出总数，再按类型分组说明各组数量与名称；只说明用了哪些数据集，哪些用于训练、哪些用于测试，涉及分布迁移时说明哪些属于 ID、哪些属于 OOD。额外用于泛化的数据集明确写成 `[k] other datasets with unseen task types: ...`，不只写“两种任务类型”而让读者数不清数据集。划分、统计与预处理放附录。
+- **Models：** 列出使用的模型，区分生成、评价、特征提取等角色；版本与推理配置放附录。训练用（source）模型与迁移目标（target）模型分两组时，用连贯的句子写出二者关系，如 `We train X on labeled responses of [k] models ... . We then transfer ... , without any target label, to [m] held-out models ...`，不写成互不相关的两句。
+- **Baselines：** 以 `We compare X with the following baselines.` 开头直接列举，不写 `Table~X compares ...`；按最接近路线、强比较方法与必要简单方法粗略分组；标明消融、使用额外信息的参考方法及引用结果。最后一句指向附录，如 `Detailed descriptions of these baselines are in Appendix~X.`
+- **Metrics：** 先说成功标准，再说用了哪几类指标、各自含义及方向。交代会改变比较的标签、采样／调用预算、评价器与统计口径；置信度排序、概率校准、实际决策收益分别解释。正文不列公式，最后一句写 `Detailed definitions of these metrics are in Appendix~X.`；即使领域论文通常不写指标公式，附录也给出每个指标的形式化定义，方便审稿人查阅。
 
 **2. 结果与分析（约占实验文字 80%）**
 
