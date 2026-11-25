@@ -6,7 +6,7 @@
 - **Novelty 是具体差别及其意义：** 相比最接近的工作，改变了哪项问题设定、信息需求、机制、性质或解释，因此新增什么能力。仅更换名称、拼接组件或提升一个分数，不足以解释新意；用具体比较让读者看见贡献。
 - **Insight 是设计背后的认识：** 哪个观察、关系或结构解释了困难，并使某个设计成为合理选择。先讲认识，再讲操作；“我们提出一种新框架”只是贡献声明。观察可以来自数据、例子或理论，不强制另做动机实验。
 - **对照示例：**
-  - Insight。✗ `We propose a novel framework that combines retrieval and reranking.`（只是贡献声明）✓ `Our key insight is that most retrieval failures come from a granularity mismatch between queries and documents, not from ranking noise; aligning granularity before ranking therefore removes the dominant error source.`
+  - Insight。✗ `We propose a novel framework that combines retrieval and reranking.`（只是贡献声明）✓ `Our key insight is that most retrieval failures come from a granularity mismatch between queries and documents, not from ranking noise; aligning granularity before ranking removes the dominant error source.`
   - Novelty。✗ `Unlike prior work, our method achieves better performance.` ✓ `Unlike X, which calibrates with labeled target data, our method calibrates with unlabeled model outputs alone, so it applies to domains without annotations.`
 - 挑战、设计与验证相互对应即可，不机械凑成三组。分析论文围绕研究问题与发现组织，理论论文围绕对象、性质与推论组织，数据集论文围绕能力缺口、构建原则与验证组织。
 
@@ -17,7 +17,7 @@
 | 章节 | 起始占比 | 篇幅主要用于 |
 |---|---:|---|
 | Abstract | 3% | 一条完整贡献链，通常 150–250 英文词 |
-| Introduction | 16% | 问题、缺口、洞察与贡献，通常 6–8 段 |
+| Introduction | 16% | 问题、相关工作、挑战、洞察、方法、结果，6 段加贡献列表 |
 | Problem Formulation | 8% | 输入输出、可用信息与目标，通常 2–4 段 |
 | Method | 28% | 核心机制、设计理由与完整使用流程 |
 | Experiments | 36% | 主效果、设计验证及有价值的进一步发现 |
@@ -43,6 +43,7 @@
 - 每节先回答一个读者问题，每段推进一个中心判断。段首给判断或目的，随后解释或举证，段末交代其作用或自然引出下一步；不要求每段都补总结句。
 - 首次阅读应能沿着文字读通“为什么、做什么、得到什么”。先给直觉、例子或总览，再引入必要符号。方法类论文默认用一个贯穿全文的小例子，串联定义、性质与结果。
 - **定义先于使用：** 术语、符号和图表标签在首次出现处或之前定义；靠前的 Teaser 和表格在原位置就能读懂，结果表不早于其基线和指标的定义。正文指向附录参考约 8–14 处，每处说明附录里有什么；一段通常只引用一组图表。
+- **交叉引用写进句子：** 引用图、表、章节和附录时，让引用成为句子成分，不在句末加括号。✗ `We ask whether labels from other models can suffice to score its responses (Figure~\ref{fig:teaser}).` ✓ `As shown in Figure~\ref{fig:teaser}, we ask whether ...`；也可写 `Table~\ref{tab:main} reports ...`、`Section~\ref{sec:method} describes ...`、`Appendix~\ref{app:setup} lists the full configuration.`。Abstract 不含任何交叉引用；Introduction 只引用 Teaser 和一个主结果图或表，不引用 Section 与 Appendix。
 - **术语、缩写与符号：** 使用领域通用术语，用词对照 baseline 与最接近的工作，不自造词，不给普通操作层层命名；同一对象保持同一名称。缩写在摘要和正文中各自第一次出现时必须展开，AUROC 等常见指标名及数据集、模型名除外；自造缩写尽量少，参考 3–5 个以内；方法名第一次出现写成 `Judge-Imitating Probe (JIP)` 的形式。一个符号只表示一个对象。
 - **保留理论骨架，压缩推导负担。** 正文保留定义方法的公式、核心性质及条件，并解释它为何改变设计或结论。长证明、辅助引理、代数展开放附录。正文的定理、命题等形式化结论参考 3 个以内，其余写成非形式表述并指向附录中的正式版本，条件与附录一致；每个形式化结论前一句说明它回答的问题，后一句说明它对方法或结论意味着什么。经验型论文不为显得严谨堆定理；理论型论文保留核心证明思路，不照搬经验论文的低理论密度。
 - 连续出现定义、公式、定理时，检查读者是否知道每一步的用途；需要解释就插入解释，关系简单就并入行内，避免形式化结论连续堆叠。编号公式参考每页 0–1 个。图与算法用于缩短理解路径，不能替代关键机制的文字说明。
@@ -64,3 +65,5 @@ Abstract、Introduction、Conclusion 使用对应文件中的衔接框架；其�
 - **替换空泛用词：** `delve into`、`crucial / pivotal / paramount`、`intricate`、`realm`、`landscape`、`tapestry`、`myriad`、`showcase`、`underscore`、`shed light on`、`pave the way`、`groundbreaking`、`seamless(ly)`、`it is worth noting that`、`plays a crucial role in` 改为具体陈述；`leverage / utilize` 一般写 `use`；`novel` 不反复自称；`robust`、`comprehensive`、`significantly` 只在有对应证据或统计检验时使用。
 - **不用模板句式：** 不用 em dash（—）插入语，改用括号或拆句；不用 `not only ... but also`、`It is not X, but Y` 式反转；不凑三项排比或三连形容词；不在段末加 `This demonstrates the effectiveness of ...` 一类总结句；不连续用 `Moreover / Furthermore / Additionally` 开头。
 - **写法朴素具体：** 主语明确，多用主动语态和 `we`；方法与结论用一般现在时，具体实验过程可用过去时。一个概念始终用同一术语，不为避免重复换同义词。一句话不要断成很多截，少用连续逗号插入语，例如写 `could not see in principle`，不写 `could not, in principle, see`。
+- **少用 `let` 一类短词：** `lets X do` 改为 `allows X to do` 或 `enables X to do`，例如 ✗ `A confidence score for each response lets a system abstain` ✓ `A confidence score for each response allows a system to abstain`。数学定义中的 `Let $x$ denote ...` 不受此限。
+- **连接副词不夹在句中：** `therefore`、`thus`、`hence` 不放在主语与谓语之间。确为因果推进时移到句首，✗ `We therefore ask whether ...` ✓ `Therefore, we ask whether ...`；上文已说清因果时直接删去，写 `We ask whether ...`。
