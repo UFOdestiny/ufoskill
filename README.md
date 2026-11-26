@@ -18,23 +18,22 @@ Claude Code 使用 `/ufoskill:writing`。局部修改保持局部；只需审阅
 
 ```text
 skills/writing/
-  SKILL.md                   唯一入口，按需读取规范
+  SKILL.md                   唯一入口：规则强度、文件分工、读取范围、工作流程
   agents/openai.yaml         Codex 显示信息
   references/
-    general.md               全局故事、篇幅、数字与理论密度
-    sections/                十个章节的内部逻辑
-    presentation/            figures、tables、citations
+    general.md               全文主线、章节顺序与篇幅、内容取舍
+    sections/                十个章节的行文逻辑
+    style/                   句子、术语、数字、交叉引用、公式与理论
+    presentation/            图（内容与绘图规格）、表格、引用
 plugin.json                  Codex 插件声明
 .agents/plugins/             Codex marketplace（UFOdestiny）
 .claude-plugin/              Claude 插件声明与 marketplace（UFOdestiny）
 scripts/manage.py            验证、更新版本、打包
-tests/                      资源完整性与双客户端加载测试
+tests/                       资源完整性与双客户端加载测试
 .github/workflows/ci.yml     持续验证与标签发布
 ```
 
-从 [writing 入口](skills/writing/SKILL.md) 阅读章节索引；[全局规范](skills/writing/references/general.md) 统一全文取舍。
-
-章节顺序为 **Abstract → Introduction → Problem Formulation → Method → Experiments → Related Work → Conclusion → Limitations（可选）→ Ethical Considerations（可选）→ Appendix**。Abstract、Introduction、Conclusion 提供衔接框架，其他章节以逻辑关系为主。
+从 [writing 入口](skills/writing/SKILL.md) 阅读规则强度约定与文件索引；[全文规范](skills/writing/references/general.md) 给出默认章节顺序与篇幅预算。
 
 所有写作依赖都在 `skills/writing/` 内；写作时无需 Python。插件安装使用完整仓库，以保留两种客户端的发现与安装信息。
 
