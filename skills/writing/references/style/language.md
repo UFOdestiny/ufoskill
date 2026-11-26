@@ -4,7 +4,8 @@
 
 ## 句子
 
-- **一句讲一件事：** 能独立成句的内容用句号分开，不用分号硬接；难懂的定义改写成直白的短句。
+- **一句讲一件事：** 能独立成句的内容用句号分开；难懂的定义改写成直白的短句。
+- **不用分号连接分句：** 两个独立分句不用分号相接，撰写、改写和润色时都不新增这类句子。按两部分的关系改写且不改变原意：关系松散时拆成两句；转折、因果或并列紧密时用 `but`、`so`、`and` 连接；一部分为另一部分提供背景时改成从句。分号只保留在三处：分隔本身含逗号的列表项，表注与图注中的缩写说明（如 `LP: log-probability; SC: self-consistency`），以及伪代码。
 - **不打碎句子：** 一句话不断成很多截，默认不用连续的逗号插入语。
 - **主语明确：** 默认用主动语态和 `we`。代词 `it`、`this` 必须有明确先行词；标题中不用 `it`；指代方法时直接写方法名（方法名用法见[术语](terminology.md)）。
 - **时态：** 方法与结论用一般现在时，具体实验过程可用过去时。
@@ -27,6 +28,8 @@
 
 | ✗ | ✓ |
 |---|---|
+| `GAR splits each document before ranking; the reranker then scores each passage.` | `GAR splits each document before ranking. The reranker then scores each passage.` |
+| `Recall rises on long documents; it barely changes on short ones.` | `Recall rises on long documents but barely changes on short ones.` |
 | `We therefore split each document before ranking.` | `Therefore, we split each document before ranking.`；因果已清楚时写 `We split each document before ranking.` |
 | `A confidence score for each response lets a system abstain.` | `A confidence score for each response allows a system to abstain.` |
 | `The retriever could not, in principle, see the answer.` | `The retriever could not see the answer in principle.` |
