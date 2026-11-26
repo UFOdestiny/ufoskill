@@ -24,6 +24,7 @@
 - 两个数的比较写 `from X to Y`（同一方法改动前后）或 `X vs. Y`，不写 `X against Y`。能用结论加图表指向说清的，句中不报数。
 - 摘要与贡献列表中的总结性结果写成相对最强基线的提升百分比（如 `improves ... by X% over the strongest baseline`），并注明是相对提升；正文结果段再给具体数值与比较对象。
 - 比较必须说清对象、指标与关键条件，区分百分点、相对提升和绝对差值；说明汇总口径，不把最好单点写成平均收益。
+- **默认范围只交代一次：** 汇总口径（如对设置或数据集取宏平均）在实验设置的指标部分说明一次。此后对全部设置、数据集或模型求平均是默认情况，正文、图注和表注默认不再写 `over all 30 settings`、`averaged over settings` 一类说明：✗ `Recall@10 per retriever and over all 12 datasets (All).` ✓ `Recall@10 per retriever (All).` 偏离默认时才写明范围，如只用子集或排除部分设置（`on the 8 datasets with at least 500 queries`），或胜负计数需要分母（`in 9 of 12 datasets`）。
 - 摘要和引言报方法性能比较时用平均指标，不用 `in k of N settings` 式计数；实验部分这种计数只补充平均结果，用一两次。
 - 子集对比等次要诊断的数值放附录，正文只写结论并指向对应表格。机制验证小节在正文保留支撑结论所需的一组比较，完整数值放附录。
 
